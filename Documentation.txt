@@ -28,6 +28,8 @@ not significant in R-type
 WB
 writes result calculated from ALU in register rd
 
+
+
 *********************Branch - BEQ**********************************
 
 opcode  ||  rs     ||  rt      ||   address
