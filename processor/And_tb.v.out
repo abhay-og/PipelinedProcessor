@@ -1,0 +1,39 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 12;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+S_00000288ab855100 .scope module, "And_tb" "And_tb" 2 4;
+ .timescale -12 -12;
+v00000288ab7cd910_0 .var "a", 0 0;
+v00000288ab7cd9b0_0 .var "b", 0 0;
+v00000288ab7cda50_0 .net "y", 0 0, L_00000288ab822950;  1 drivers
+S_00000288ab855290 .scope module, "AndDUT" "And" 2 5, 3 1 0, S_00000288ab855100;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "a";
+    .port_info 1 /INPUT 1 "b";
+    .port_info 2 /OUTPUT 1 "y";
+L_00000288ab822950 .functor AND 1, v00000288ab7cd910_0, v00000288ab7cd9b0_0, C4<1>, C4<1>;
+v00000288ab822db0_0 .net "a", 0 0, v00000288ab7cd910_0;  1 drivers
+v00000288ab855420_0 .net "b", 0 0, v00000288ab7cd9b0_0;  1 drivers
+v00000288ab8554c0_0 .net "y", 0 0, L_00000288ab822950;  alias, 1 drivers
+    .scope S_00000288ab855100;
+T_0 ;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v00000288ab7cd910_0, 0, 1;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v00000288ab7cd9b0_0, 0, 1;
+    %delay 10, 0;
+    %vpi_call 2 13 "$display", "%b", v00000288ab7cda50_0 {0 0 0};
+    %end;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "And_tb.v";
+    "./And.v";

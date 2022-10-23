@@ -1,0 +1,317 @@
+*** PIPELINED MIPS BASED PROCESSOR ***
+
+This project is an implementation of a 5-stage pipelined MIPS based processor. The implementation is based on a limited ISA, 
+and the implementation was verified by testbenching the various modules used in the project. The 'processor.v' contains code for data path and control path is the main file for verilog 32-Bit microprocessor
+On running 'processor.v' pipelining is getting executed. module instruction_fetch reads 'bin_output.txt' and gives instruction corresponding to PC value.The pipeline consists of different stages
+for different kinds of instructions as mentioned below: 
+
+********************R-type instruction***************************
+
+opcode  ||  rs     ||  rt      ||  rd     ||  shamt  ||  funct
+[31:26] || [25:21] ||  [20:16] || [15:11] ||  [10:6] ||  [5:0]
+
+opcode for R-type is 000000
+IF
+PC increments by 1
+
+ID
+divides instruction into rs, rt, rd, funct, opcode
+sends opcode to control signal and generates signls for R-types
+checks for stall, if RAW hazard detected then makes all signals zero
+read data from rs and rt register
+
+EX
+ALU_control genertes operation for ADD, SUB, MUL, DIV 
+data from rs and rt and operation goes into ALU 
+result calculated in ALU
+
+MEM
+not significant in R-type
+
+WB
+writes result calculated from ALU in register rd
+
+*********************Branch - BEQ**********************************
+
+opcode  ||  rs     ||  rt      ||   address
+[31:26] || [25:21] ||  [20:16] || [15:0]
+
+opcode is 000100
+
+IF
+PC increments by 1
+
+ID
+divides instruction into rs, rt, address
+sends opcode to control signal and generates signls for Branch
+checks for stall, if RAW hazard detected then makes all signals zero
+read data from rs and rt register
+
+EX
+ALU_control genertes operation for SUB 
+data from rs and rt and operation goes into ALU 
+result calculated in ALU
+if result is ZERO, flag zero generated and PC value is changed to address specified by address field
+
+MEM  and WB
+insignificant
+
+
+*********************Branch - BNE**********************************
+
+opcode  ||  rs     ||  rt      ||   address
+[31:26] || [25:21] ||  [20:16] || [15:0]
+
+opcode is 000101
+
+IF
+PC increments by 1
+
+ID
+divides instruction into rs, rt, address
+sends opcode to control signal and generates signals for Branch
+checks for stall, if RAW hazard detected then makes all signals zero
+read data from rs and rt register
+
+EX
+ALU_control genertes operation for SUB 
+data from rs and rt and operation goes into ALU 
+result calculated in ALU
+if result is not ZERO, PC value is changed to address specified by address field
+if Branch taken then next two instructions are stalled
+
+MEM  and WB
+insignificant
+
+*********************Branch - BNE**********************************
+
+opcode  || 0000000 || address
+[31:26] || [25:16] ||  [15:0]
+opcode is 000010
+
+IF
+PC increments by 1
+
+ID
+divides signal into address for jump
+sends opcode to control signal and generates signals for Branch
+
+EX
+PC value is changed to address specified by address field
+next two instruction are stalled
+
+MEM  and WB
+insignificant
+
+
+*********************LOAD**********************************
+
+opcode  ||  rs     ||  rt      ||   immediate value  
+[31:26] || [25:21] ||  [20:16] ||    [15:0]
+opcode is 100011
+
+IF
+PC increments by 1
+
+ID
+divides instruction into rs, rt, immediate value
+sends opcode to control signal and generates signls for Load
+checks for stall, if RAW hazard detected then makes all signals zero
+read data from rs register
+
+EX
+ALU_control genertes operation for ADD 
+data from rs and imm32 and operation goes into ALU 
+result calculated in ALU
+
+MEM
+value of memory whose address is specified by ALU result is read and stored
+
+WB
+writes value taken from data memory into rt register
+
+
+*********************STORE**********************************
+
+opcode  ||  rs     ||  rt      ||   immediate value  
+[31:26] || [25:21] ||  [20:16] ||    [15:0]
+
+opcode is 101011
+
+IF
+PC increments by 1
+
+ID
+divides instruction into rs, rt, immediate value
+sends opcode to control signal and generates signls for Store
+checks for stall, if RAW hazard detected then makes all signals zero
+read data from rs and rd registers
+
+EX
+ALU_control genertes operation for ADD 
+data from rs and imm32 and operation goes into ALU 
+result calculated in ALU
+
+MEM
+value of memory whose address is specified by ALU result is written over by value stored in rt register
+
+WB
+insignificant
+
+
+*********************ADI-ADD immediate**********************************
+
+opcode  ||  rs     ||  rt      ||   immediate value  
+[31:26] || [25:21] ||  [20:16] ||    [15:0]
+opcode is 100011
+
+IF
+PC increments by 1
+
+ID
+divides instruction into rs, rt, immediate value
+sends opcode to control signal and generates signls for ADI, I-type
+checks for stall, if RAW hazard detected then makes all signals zero
+read data from rs register
+
+EX
+ALU_control genertes operation for ADD 
+data from rs and imm32 and operation goes into ALU 
+result calculated in ALU
+
+MEM
+insignificant
+
+WB
+writes value of result into rt register
+
+
+************************************************
+
+
+** INSTRUCTION SET ARCHITECTURE **
+
+The instructions are stored in the instruction memory and fetched by the instruction_fecth unit at the rate of one instruction per cycle.
+A brief overview of the ISA, i.e instruction set architecture is given below: 
+
+Instruction format: 
+The instructions used in this implementation are 32 bits (4 bytes) long. They can be broadly classified into the below mentioned types: 
+
+
+-> R-Type Instruction: These are the most common kind of instructions used in MIPS, and all the operands which are used in this operation
+are already present in the registers. They do not require any immediate value, target address, branch displacement, etc.
+In our ISA, an R-type instruction has 6-components namely: 
+    1> op-code : Operation-code (op-code for short) This is 6-bit long and generally specifies the kind of operation that is performed 
+                 by the CPU. For R-type instruction in this ISA, it is 000000.
+    2> rs : One of the operand is fetched from the address of the register mentioned in this component, i.e the source register1. 
+            This is 5-bits long since there are 32 registers (i.e, from 00000 to 11111).
+    3> rt : The other operand is fetched from the address of the register mentioned in this component, i.e the source register2. 
+            This is also 5-bits long (i.e, from 00000 to 11111).
+    4> rd : This mentions the address of the register into which the result of the operation will be stored, i.e the destination register.
+            This is also 5-bits long (i.e, from 00000 to 11111).
+    5> shamt : Short for shift-amount, shamt, is the number of bits which we want to shift and is 5-bits long. In this ISA it is set to 00000.
+    6> funct-code : This is the 6th component of the R-Type instruction and is 6-bits long. It is different for different types of R-Type instructions.
+                    The function codes for different available operations are mentioned below. 
+                    --> ADD 100000 (addition)
+                    --> SUB 100010 (subtraction)
+                    --> MUL 011000 (multiplication)
+                    --> DIV 011010 (division)
+                    --> ORR 100101 (binary OR)
+                    --> AND 100100 (binary AND)
+                    --> SLL 000000 (logical shift left)
+                    --> SRL 000010 (logical shift right)
+The format goes this way : 
+[6-bit opcode ] || [5-bit source register1] || [5-bit source register2] || [5-bit destination register] || [5-bit shamt] || [6-bit function code]
+
+
+-> I-Type Instruction: These are the kind of instruction where there is a source register which contains one of the operand, there is an 
+immediate value which is used as the second operand and the operation is performed and stored in the destination register mentioned in
+the instruction. In this ISA, there are four components namely: 
+    1> op-code : This is again a 6-bit long operation code that is different for each of the immediate type operation. This specifies the
+                 type of operation that is to be performed by the ALU. For the different types of I-Type instruction, the op-codes are : 
+                 --> ADI 001000 (add immediate)
+                 --> ORI 001101 (binary OR immediate)
+                 --> ANI 001100 (binary AND immediate)
+                 --> XOI 001110 (binary XOR immediate)
+    2> rs : One of the operand is fetched from the address of the register mentioned in this component, i.e the source register1. 
+            This is 5-bits long since there are 32 registers (i.e, from 00000 to 11111).
+    3> rd : This is the destination register in which the value obtained after the operation gets stored(can also be called as rt).
+            This is also 5-bits long (i.e, from 00000 to 11111).
+    4> immediate value: This is the immediate value of the second operand and is 16-bits long. 
+Thus, the format of the I-Type instruction is: 
+[6-bit opcode] || [5-bit source register] || [5-bit destination register] || [16-bit immediate value]
+
+
+-> J-Type Instruction:  A JUMP instruction asks interpreter to stop executing the next line and execute the line defined in the statement 
+first and than resume its normal working. Thus the sequential execution of the instructions is altered. Such statements are usually 
+used to execute loops. There are only two components in this type of instruction. They are: 
+    1> op-code : this field is 6-bit long and is equal to 000010.
+    2> address : this field contains 26-bit long address of the line to be next executed. 
+Hence, the format of the J-Type instruction is: 
+[6-bit op-code] || [26-bit address]
+
+-> B-Type Instruction: A  branch is an instruction in a computer program that can cause a computer to begin executing a different 
+instruction sequence and thus deviate from its default behavior of executing instructions in order. These, just like I-Type instructions,
+contain 4-components. They are given below: 
+    1> op-code : This is again a 6-bit long operation code that is different for each of the two branch type operation. This specifies the
+                 type of branch operation that is to be performed by the ALU. For the different types of I-Type instruction, the op-codes are : 
+                 --> BNE 000101 (branch if not equal)
+                 --> BEQ 000100 (brnach if equal)
+    2> rs : One of the registers whose value is compared is rs, i.e the source register1. This is 5-bits long since there are 
+    32 registers (i.e, from 00000 to 11111).
+    3> rd : This is the second register whose value is compared with the first register and then decided whether the branch 
+    occurs or not.(can also be called as rt).This is also 5-bits long (i.e, from 00000 to 11111).
+    4> address: This is the address to which the next program counter must point in case the branch occurs. In the case where there
+    is no branch, the usual sequential execution of instructions start taking place. 
+Thus, the format of the I-Type instruction is: 
+[6-bit opcode] || [5-bit register1] || [5-bit register2] || [16-bit address]
+
+
+** ASSEMBLY LANGUAGE USED **
+All the operations have keywords which are only three charecters long. The language is case-insensitive and space insensitive.
+The different operations available are: 
+1> R-Type instructions : 
+    XYZ $a $b $c
+    Here, XYZ is the operation and $a is the destination register, $b and $c are the source registers.
+    Different types of XYZ instructions available with the operations they perform are : 
+    ADD - addition
+    SUB - subtraction
+    MUL - multiplication
+    DIV - division
+    ORR - binary OR
+    AND - binary AND
+    SLL - shift left logical
+    SRL - shift right logical
+2> I-Type Instructions : 
+    XYZ imm $a $b
+    Here, XYZ is the operation, $a is the destination register, $b is the source register with imm being the immediate decimal value.
+    Different types of XYZ instructions available with the operations they perform are : 
+    ADI - add immediate
+    ORI - binary OR immediate
+    ANI - binary AND immediate
+    XOI - binary XOR immediate
+3> J-Type Instruction : 
+    JUM label
+    label here can be as long as needed and the lable must be mentioned somewhere else in the code in a new line and must end with ':'
+4> Branch-Type Instruction: 
+    XYZ addr $a $b
+    Here, XYZ has two different types, i.e, BEQ (which branches if the registers $a and $b are equal) amd BNE (which branches in case
+    the registers $a and $b are not equal). If the branch occurs, the PC points to the address mentioned by the addr
+
+
+** HADNLING THE HAZARDS IN THE PEPELINE **
+
+==> RAW hazard:
+To check for this, we see if instruction in ID stage has any read registers matching with destination registers of previous three instructions.
+If yes then stall that particular instruction given that destination register is not $0 and the current instruction is not already under stall.
+It's detected in the instruction decode stage.
+Stalling is done by making all control signals as zer0 and making write registers as $0, to avoid infinite loop
+PC value is changed to he current instruction so it enters the cycle again
+Since instruction succeeding this current instruction has also entered cycle, we generate signals to make it also NOP
+
+==> Branch/Jump hazard:
+We are assuming here Branch Not Taken
+It is detected during execution after the result is calculated from the ALU. Accordingly it decides whether to do branch or jump.
+FOR BEQ(Branch equal): Branch is one and zero flag is one
+FOR BNE(Branch not equal): nBranch is one and zero flag is zero
+By the time branch(BEQ or BNE) or jump is detected, processing of next three instructions would be in progress, so all of them will be stalled and next instruction to be executed will be decided by the one specified by branch or jump.

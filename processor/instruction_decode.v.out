@@ -1,0 +1,52 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+S_0000018c29be6380 .scope module, "instruction_decode" "instruction_decode" 2 1;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 32 "IF_instruction";
+    .port_info 2 /OUTPUT 6 "op";
+    .port_info 3 /OUTPUT 6 "rs";
+    .port_info 4 /OUTPUT 6 "rt";
+    .port_info 5 /OUTPUT 6 "rd";
+    .port_info 6 /OUTPUT 6 "funct";
+    .port_info 7 /OUTPUT 16 "imm";
+o0000018c29a86f98 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v0000018c29be6a00_0 .net "IF_instruction", 31 0, o0000018c29a86f98;  0 drivers
+L_0000018c29ac9c50 .functor BUFT 1, C4<0>, C4<0>, C4<0>, C4<0>;
+v0000018c29be97f0_0 .net *"_ivl_13", 0 0, L_0000018c29ac9c50;  1 drivers
+v0000018c29be9250_0 .net *"_ivl_15", 4 0, L_0000018c29a83790;  1 drivers
+L_0000018c29ac9c98 .functor BUFT 1, C4<0>, C4<0>, C4<0>, C4<0>;
+v0000018c29be8120_0 .net *"_ivl_19", 0 0, L_0000018c29ac9c98;  1 drivers
+v0000018c29bebc20_0 .net *"_ivl_3", 4 0, L_0000018c29a83470;  1 drivers
+L_0000018c29ac9c08 .functor BUFT 1, C4<0>, C4<0>, C4<0>, C4<0>;
+v0000018c29bebcc0_0 .net *"_ivl_7", 0 0, L_0000018c29ac9c08;  1 drivers
+v0000018c29bebd60_0 .net *"_ivl_9", 4 0, L_0000018c29a83a10;  1 drivers
+o0000018c29a870e8 .functor BUFZ 1, C4<z>; HiZ drive
+v0000018c29bebe00_0 .net "clk", 0 0, o0000018c29a870e8;  0 drivers
+v0000018c29a84230_0 .net "funct", 5 0, L_0000018c29a84190;  1 drivers
+v0000018c29a83970_0 .net "imm", 15 0, L_0000018c29a83830;  1 drivers
+v0000018c29a83d30_0 .net "op", 5 0, L_0000018c29a833d0;  1 drivers
+v0000018c29a836f0_0 .net "rd", 5 0, L_0000018c29a84050;  1 drivers
+v0000018c29a83fb0_0 .net "rs", 5 0, L_0000018c29a83ab0;  1 drivers
+v0000018c29a83e70_0 .net "rt", 5 0, L_0000018c29a83f10;  1 drivers
+L_0000018c29a833d0 .part o0000018c29a86f98, 26, 6;
+L_0000018c29a83470 .part o0000018c29a86f98, 21, 5;
+L_0000018c29a83ab0 .concat [ 5 1 0 0], L_0000018c29a83470, L_0000018c29ac9c08;
+L_0000018c29a83a10 .part o0000018c29a86f98, 16, 5;
+L_0000018c29a83f10 .concat [ 5 1 0 0], L_0000018c29a83a10, L_0000018c29ac9c50;
+L_0000018c29a83790 .part o0000018c29a86f98, 11, 5;
+L_0000018c29a84050 .concat [ 5 1 0 0], L_0000018c29a83790, L_0000018c29ac9c98;
+L_0000018c29a84190 .part o0000018c29a86f98, 0, 6;
+L_0000018c29a83830 .part o0000018c29a86f98, 0, 16;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "instruction_decode.v";
