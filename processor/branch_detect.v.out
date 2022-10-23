@@ -1,0 +1,48 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+S_000001d2164963c0 .scope module, "branch_detect" "branch_detect" 2 1;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "Branch";
+    .port_info 1 /INPUT 1 "Zero";
+    .port_info 2 /INPUT 1 "nBranch";
+    .port_info 3 /INPUT 1 "jump";
+    .port_info 4 /OUTPUT 1 "Do_branch";
+    .port_info 5 /OUTPUT 1 "stall";
+o000001d2164e6fb8 .functor BUFZ 1, C4<z>; HiZ drive
+o000001d2164e7018 .functor BUFZ 1, C4<z>; HiZ drive
+L_000001d21649b0a0 .functor AND 1, o000001d2164e6fb8, o000001d2164e7018, C4<1>, C4<1>;
+o000001d2164e71c8 .functor BUFZ 1, C4<z>; HiZ drive
+L_000001d216496e60 .functor AND 1, o000001d2164e71c8, L_000001d2164e0e90, C4<1>, C4<1>;
+L_000001d21649ed20 .functor OR 1, L_000001d21649b0a0, L_000001d216496e60, C4<0>, C4<0>;
+L_000001d21649ed90 .functor AND 1, o000001d2164e6fb8, o000001d2164e7018, C4<1>, C4<1>;
+L_000001d21649ee90 .functor AND 1, o000001d2164e71c8, L_000001d2164e16b0, C4<1>, C4<1>;
+L_000001d21649ef00 .functor OR 1, L_000001d21649ed90, L_000001d21649ee90, C4<0>, C4<0>;
+o000001d2164e7198 .functor BUFZ 1, C4<z>; HiZ drive
+L_000001d2164e1a90 .functor OR 1, L_000001d21649ef00, o000001d2164e7198, C4<0>, C4<0>;
+v000001d216496a20_0 .net "Branch", 0 0, o000001d2164e6fb8;  0 drivers
+v000001d21649b000_0 .net "Do_branch", 0 0, L_000001d21649ed20;  1 drivers
+v000001d216496550_0 .net "Zero", 0 0, o000001d2164e7018;  0 drivers
+v000001d2164965f0_0 .net *"_ivl_0", 0 0, L_000001d21649b0a0;  1 drivers
+v000001d216496690_0 .net *"_ivl_11", 0 0, L_000001d2164e16b0;  1 drivers
+v000001d216496730_0 .net *"_ivl_12", 0 0, L_000001d21649ee90;  1 drivers
+v000001d21649eaa0_0 .net *"_ivl_14", 0 0, L_000001d21649ef00;  1 drivers
+v000001d21649eb40_0 .net *"_ivl_3", 0 0, L_000001d2164e0e90;  1 drivers
+v000001d21649ebe0_0 .net *"_ivl_4", 0 0, L_000001d216496e60;  1 drivers
+v000001d21649ec80_0 .net *"_ivl_8", 0 0, L_000001d21649ed90;  1 drivers
+v000001d2164e1890_0 .net "jump", 0 0, o000001d2164e7198;  0 drivers
+v000001d2164e0d50_0 .net "nBranch", 0 0, o000001d2164e71c8;  0 drivers
+v000001d2164e1070_0 .net "stall", 0 0, L_000001d2164e1a90;  1 drivers
+L_000001d2164e0e90 .reduce/nor o000001d2164e7018;
+L_000001d2164e16b0 .reduce/nor o000001d2164e7018;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "branch_detect.v";
