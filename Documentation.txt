@@ -10,7 +10,7 @@ opcode  ||  rs     ||  rt      ||  rd     ||  shamt  ||  funct
 opcode for R-type is 000000
 IF
 PC increments by 1
-
+ 
 ID
 divides instruction into rs, rt, rd, funct, opcode
 sends opcode to control signal and generates signls for R-types
