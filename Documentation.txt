@@ -1,4 +1,4 @@
-***  PIPELINED MIPS BASED PROCESSOR  ****
+***  PIPELINED MIPS BASED PROCESSOR  ***
 
 The pipeline consists of different stages for different kinds of instructions as mentioned below: 
 
